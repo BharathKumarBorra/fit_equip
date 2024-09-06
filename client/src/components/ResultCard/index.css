@@ -1,18 +1,21 @@
 .exercise-card {
-  width: 100%;
   list-style-type: none;
   display: flex;
   align-items: center;
   padding: 10px 12px;
   gap: 12px;
-  border-bottom: solid 1px gray;
+  border: solid 1px gray;
+  border-radius: 6px;
   flex-wrap: wrap;
+  box-shadow: rgb(224, 231, 238) 0px 0px 0px 1px,
+    rgba(0, 0, 0, 0.12) 2px 6px 10px 0px;
 }
 
 .exercise-image {
   width: 45px;
   aspect-ratio: 1/1;
   border-radius: 6px;
+  transition: width 0.4s ease-in-out;
 }
 
 .full-width-image {
@@ -39,7 +42,7 @@
 
 .exercise-name {
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: bold;
   margin: 0;
   line-height: 1;
 }
@@ -95,8 +98,14 @@
   }
 }
 
+@media screen and (min-width: 1024px) {
+  .exercise-card {
+    width: 29%;
+  }
+}
+
 @media screen and (min-width: 1400px) {
   .exercise-card {
-    width: 30%;
+    width: 22%;
   }
 }

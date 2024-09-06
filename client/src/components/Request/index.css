@@ -1,21 +1,24 @@
 .request-section {
   max-width: 100%;
-  height: calc(100vh - 60px);
   overflow-x: hidden;
 }
 .request-main-section {
   box-sizing: border-box;
   max-width: 100%;
+  min-height: calc(100vh - 60px);
   overflow-x: none;
   padding: min(5vw, 5vh) 5vw;
   display: flex;
   flex-direction: column;
   font-family: Inter;
+  margin-top: 60px;
 }
 
 .home-page-image {
   width: 50%;
   display: none;
+  box-shadow: rgb(224, 231, 238) 0px 0px 0px 1px,
+    rgba(0, 0, 0, 0.12) 2px 6px 10px 0px;
 }
 
 .request-form {
@@ -45,6 +48,10 @@
 }
 
 .selected-equipments-container {
+  height: 15vh;
+  max-height: 30vh;
+  overflow-y: auto;
+
   border: solid 1px gray;
   color: gray;
   font-size: 0.9rem;
@@ -53,8 +60,12 @@
   border-radius: 6px;
   margin-bottom: 12px;
   display: flex;
+  align-items: flex-start;
   flex-wrap: wrap;
   gap: 12px;
+  /* Styles for scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: #c7c7c7 #f5f5f5;
 }
 
 .selected-equipment-card {
@@ -78,6 +89,18 @@
   font-weight: 500;
   margin: 0;
   color: black;
+}
+
+.close-icon {
+  color: black;
+  padding: 1px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.close-icon:hover {
+  background-color: rgb(179, 176, 176);
+  cursor: pointer;
 }
 
 label {
@@ -152,6 +175,7 @@ input {
 }
 
 .body-part-header {
+  box-sizing: border-box;
   padding: 10px 12px;
   border-radius: 6px;
 
@@ -159,20 +183,70 @@ input {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  font-size: 0.8rem;
+  height: 42px;
+}
+
+.body-part-list-card {
+  margin: 6px 0 0;
+  position: relative;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate(-20px);
+  }
 }
 
 .body-part-list {
+  max-height: 180px;
+  overflow-y: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
   border: solid 1px gray;
   border-radius: 6px;
   padding: 0;
-  margin: 6px 0 0;
+  margin: 0;
+  animation: fadeIn 0.4s ease-in-out;
+  box-shadow: rgb(224, 231, 238) 0px 0px 0px 1px,
+    rgba(0, 0, 0, 0.12) 2px 6px 10px 0px;
+  /* Styles for scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: #c7c7c7 #f5f5f5;
 }
 
 .body-part {
   padding: 12px;
-  border-bottom: solid 1px rgb(175, 171, 171);
+
   display: flex;
   align-items: center;
+  transition: background-color 0.2s ease-in-out;
+  cursor: pointer;
+  border-top: 1px solid rgba(123, 135, 148, 0.16);
+}
+
+.body-part:hover {
+  background-color: aliceblue;
 }
 
 .submit-button {
@@ -186,6 +260,10 @@ input {
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 10px;
 }
 
 @media screen and (min-width: 576px) {
@@ -203,16 +281,22 @@ input {
     flex-direction: row;
     align-items: stretch;
     gap: 3vw;
+    margin-top: 76px;
   }
 
   .home-page-image {
     display: block;
     flex-grow: 1;
     object-fit: cover;
+    border-radius: 1rem;
   }
   .request-form {
     width: 50%;
     max-width: 400px;
+    box-shadow: rgb(224, 231, 238) 0px 0px 0px 1px,
+      rgba(0, 0, 0, 0.12) 2px 6px 10px 0px;
+    border-radius: 1rem;
+    padding: 2rem;
   }
 
   .bodyPart-and-numberOfExcercises-card {
@@ -237,14 +321,10 @@ input {
 
 .result-section-heading {
   font-size: 24px;
-  margin: 0;
+  margin: 0 0 1rem;
+  padding-bottom: 0.8rem;
   font-weight: 600;
-}
-
-hr {
-  height: 0.5px;
-  width: 100%;
-  background-color: gray;
+  border-bottom: solid 1px gray;
 }
 
 .exercises-list {
@@ -255,14 +335,35 @@ hr {
   gap: 12px;
 }
 
+.error-message {
+  color: red;
+  text-align: center;
+  font-size: 0.8rem;
+  margin: 6px;
+}
+
+.down-arrow {
+  transition: transform 0.4s ease;
+}
+
+.rotate {
+  transform: rotate(180deg);
+}
+
 @media screen and (min-width: 768px) {
   .exercises-list {
     flex-direction: row;
     flex-wrap: wrap;
     align-items: stretch;
-    justify-content: space-between;
+    column-gap: 2%;
   }
   .result-section {
     padding: min(5vw, 5vh) calc(5vw);
+  }
+}
+
+@media screen and (min-width: 1400px) {
+  .exercises-list {
+    column-gap: 1%;
   }
 }

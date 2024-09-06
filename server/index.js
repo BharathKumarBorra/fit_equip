@@ -4,136 +4,110 @@ const cors = require("cors");
 require("dotenv").config(); // To use environment variables
 
 const app = express();
-app.use(cors());
-app.use(express.json()); // For parsing application/json
+app.use(cors()); // Enable CORS for handling cross-origin requests
+app.use(express.json()); // Middleware for parsing application/json
 
 // Database connection
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("Could not connect to MongoDB", err));
+const connectToDatabase = async () => {
+  try {
+    // Connect to MongoDB using the URI from environment variables
+    await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true, // Use the new URL parser for MongoDB
+      useUnifiedTopology: true, // Use the new server discovery and monitoring engine
+    });
+    console.log("Connected to MongoDB"); // Log a message on successful connection
+  } catch (err) {
+    // Log an error message and exit the process if connection fails
+    console.error("Could not connect to MongoDB", err);
+    process.exit(1); // Exit the process with an error code
+  }
+};
 
-// Define a schema and model
+// Define a schema and model for Exercise
 const exerciseSchema = new mongoose.Schema({
-  name: String,
-  bodyPart: String,
-  equipment: [String],
-  priority: Number,
-  instructions: String,
+  name: String, // Name of the exercise
+  bodyPart: String, // The body part the exercise targets
+  equipments: [String], // List of equipment needed for the exercise
+  priority: Number, // Priority of the exercise
+  instructions: String, // Instructions for performing the exercise
+  instructionVideo: String, // URL of a video demonstrating the exercise
 });
 
+// Define a schema and model for Equipment
 const equipmentSchema = new mongoose.Schema({
-  name: String,
-  image: String,
+  name: String, // Name of the equipment
+  image: String, // URL of an image representing the equipment
 });
 
+// Create models from the schemas
 const Exercise = mongoose.model("Exercise", exerciseSchema);
 const Equipment = mongoose.model("Equipments", equipmentSchema);
 
-app.post("/equipments", async (req, res) => {
-  try {
-    const equipmentsData = req.body;
-    const equipments = await Equipment.insertMany(equipmentsData);
-    res.status(201).send(equipments);
-    console.log("successfully added euqipments");
-  } catch (err) {
-    console.log("error: ", err);
-    res.status(500).send("Error inserting equipments");
-  }
-});
-
+// Route to get equipments
 app.get("/equipments", async (req, res) => {
   try {
-    const { name } = req.query;
+    const { name } = req.query; // Extract the name query parameter
 
-    // If a name query is provided, use a regex to match any equipment name that contains the query value
+    // Build a query object to search equipment by name if a query is provided
     const query = name ? { name: { $regex: name, $options: "i" } } : {};
 
-    const equipments = await Equipment.find(query); // Make sure the model name is correct
-    console.log("equipments: ", equipments);
+    // Fetch equipment from the database based on the query
+    const equipments = await Equipment.find(query);
 
-    res.send({ equipments });
+    res.send({ equipments }); // Send the equipments as response
   } catch (err) {
-    console.log("error: ", err);
+    // Log an error message and send a 500 status if fetching fails
     res.status(500).send("Error getting equipments");
   }
 });
 
-// POST route to insert multiple exercises
-app.post("/exercises", async (req, res) => {
-  try {
-    const exercisesData = req.body; // Array of exercise objects from the request body
-    const exercises = await Exercise.insertMany(exercisesData);
-    res.status(201).send(exercises); // Send back the inserted exercises
-  } catch (err) {
-    console.error("Error inserting exercises", err);
-    res.status(500).send("Error inserting exercises");
-  }
-});
-
-// Sample route to get exercises
+// Route to get exercises
 app.get("/exercises", async (req, res) => {
   try {
-    // Extract bodyPart from query parameters and equipments from request body
-    const { bodyPart } = req.query;
-    const { equipments } = req.body;
+    const { equipments, bodyPart, limit } = req.query;
+    // Convert the equipments query parameter into an array
+    const equipmentsArray = equipments
+      ? equipments.split(",").map((e) => e.toLowerCase())
+      : [];
 
-    // Build query based on the provided bodyPart and equipments
+    // Build the query for body part if it exists
     const query = {
       ...(bodyPart && { bodyPart }),
-      ...(equipments && { equipment: { $all: equipments } }),
     };
 
-    // Find exercises that match the query and sort by priority
-    const exercises = await Exercise.find(query).sort({ priority: 1 });
-    console.log("excercises: ", exercises);
-    res.send(exercises);
+    // Query the database for exercises based on the query object
+    let exercises = await Exercise.find(query).sort({ priority: 1 });
+
+    // Filter exercises where all equipments required are present in the equipmentsArray
+    exercises = exercises.filter((exercise) =>
+      exercise.equipments.every(
+        (eq) => eq === "" || equipmentsArray.includes(eq.toLowerCase())
+      )
+    );
+
+    // Send the filtered exercises as response, limited by the 'limit' query parameter
+    res.send(exercises.slice(0, parseInt(limit)));
   } catch (err) {
-    console.log("error: ", err);
+    // Send a 500 status if fetching fails
+
     res.status(500).send("Error retrieving exercises");
   }
 });
 
-app.get("/", async (req, res) => {
-  res.send("Hello");
-});
-
 // Start the server
-const PORT = process.env.PORT;
-app.listen(5000, () =>
-  console.log(`Server running on port http://localhost:5000`)
-);
+const startServer = () => {
+  const PORT = process.env.PORT; // Use the port from environment variables or default to 5000
+  app.listen(
+    PORT,
+    () => console.log(`Server running on http://localhost:${PORT}`) // Log a message when the server starts
+  );
+};
 
-// GET route to fetch exercises based on equipment, body part, and limit
-app.get("/exercises", async (req, res) => {
-  try {
-    const { equipments, bodyPart, limit } = req.query;
+// Initialize the database connection and start the server
+const initializeDBAndServer = async () => {
+  await connectToDatabase(); // Connect to the database
+  startServer(); // Start the server
+};
 
-    // Split the equipment names into an array
-    const equipmentArray = equipments ? equipments.split(",") : [];
-
-    // Construct the query object
-    const query = {};
-
-    if (equipmentArray.length > 0) {
-      query.equipment = { $in: equipmentArray };
-    }
-
-    if (bodyPart) {
-      query.bodyPart = bodyPart;
-    }
-
-    // Fetch exercises from the database
-    const exercises = await Exercise.find(query)
-      .limit(parseInt(limit)) // Limit the number of results
-      .exec();
-
-    res.json({ exercises });
-  } catch (error) {
-    console.error("Error fetching exercises:", error);
-    res.status(500).send("Error fetching exercises");
-  }
-});
+// Execute the initialization function
+initializeDBAndServer();

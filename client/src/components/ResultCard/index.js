@@ -1,22 +1,23 @@
 import { Component } from "react";
+import { IoIosArrowDown } from "react-icons/io";
 import "./index.css";
 
 class ResultCard extends Component {
   state = {
-    showInstructions: false,
+    showInstructions: false, // State to toggle visibility of instructions
   };
 
   render() {
     const { showInstructions } = this.state;
-    const { resultCard } = this.props;
+    const { resultCard } = this.props; // Destructure resultCard from props
 
-    const { name, instructions } = resultCard;
+    const { name, instructions, instructionVideo } = resultCard; // Destructure values from resultCard
 
     return (
       <li className="exercise-card">
         <img
           alt={name}
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNvDEw8sjIWk5XndGGs4CUZgVYoE6cxpiytg&s"
+          src={instructionVideo}
           className={`${showInstructions && "full-width-image"} exercise-image`}
         />
         <div
@@ -29,29 +30,27 @@ class ResultCard extends Component {
 
             <h5
               className="instructions-heading"
-              style={{ display: showInstructions ? "none" : "block" }}
+              style={{ display: showInstructions ? "block" : "none" }}
             >
               Instructions
             </h5>
 
             <p
               className="exercise-instructions"
-              style={{ display: showInstructions ? "none" : "block" }}
+              style={{ display: showInstructions ? "block" : "none" }}
             >
               {instructions}{" "}
             </p>
           </div>
 
-          <h5
-            className="show-more"
+          <IoIosArrowDown
             onClick={() => {
               this.setState((prevState) => ({
                 showInstructions: !prevState.showInstructions,
               }));
             }}
-          >
-            X
-          </h5>
+            className={`show-more down-arrow ${showInstructions && "rotate"}`}
+          />
         </div>
       </li>
     );

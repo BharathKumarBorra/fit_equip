@@ -1,14 +1,26 @@
 .header-container {
+  width: 100vw;
   height: 60px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 5vw;
-  border-bottom: solid 1px black;
+  box-shadow: rgba(31, 45, 61, 0.15) 0px 2px 2px 0px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: white;
+}
+
+.fit-equip-img {
+  height: 45px;
 }
 
 @media screen and (min-width: 768px) {
   .header-container {
     height: 76px;
+  }
+  .fit-equip-img {
+    height: 50px;
   }
 }
