@@ -162,6 +162,13 @@ input {
   column-gap: 12px;
 
   padding: 10px 12px;
+  border-top: 1px solid rgba(123, 135, 148, 0.16);
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.equipment-search-item:hover {
+  background-color: aliceblue;
 }
 
 .equipment-image {
@@ -236,10 +243,11 @@ input {
 }
 
 .body-part {
-  padding: 12px;
+  padding: 6px 12px;
 
   display: flex;
   align-items: center;
+  gap: 12px;
   transition: background-color 0.2s ease-in-out;
   cursor: pointer;
   border-top: 1px solid rgba(123, 135, 148, 0.16);
@@ -247,6 +255,16 @@ input {
 
 .body-part:hover {
   background-color: aliceblue;
+}
+
+.body-part-image {
+  height: 32px;
+}
+
+.body-part-name {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0;
 }
 
 .submit-button {

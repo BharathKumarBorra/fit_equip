@@ -7,14 +7,56 @@ import "./index.css";
 
 // List of body parts for filtering exercises
 const bodyPartsList = [
-  "chest",
-  "back",
-  "biceps",
-  "triceps",
-  "legs",
-  "shoulders",
-  "core",
-  "glutes",
+  {
+    name: "chest",
+    image:
+      "https://res.cloudinary.com/dpla1hz0i/image/upload/v1725651100/chest_uthghf.jpg",
+  },
+  {
+    name: "back",
+    image:
+      "https://res.cloudinary.com/dpla1hz0i/image/upload/v1725651101/back_z6qxrt.jpg",
+  },
+  {
+    name: "biceps",
+    image:
+      "https://res.cloudinary.com/dpla1hz0i/image/upload/v1725651101/biceps_rjwitw.jpg",
+  },
+  {
+    name: "triceps",
+    image:
+      "https://res.cloudinary.com/dpla1hz0i/image/upload/v1725651102/triceps_dmlyjh.jpg",
+  },
+  {
+    name: "legs",
+    image:
+      "https://res.cloudinary.com/dpla1hz0i/image/upload/v1725651101/legs_axnpqx.jpg",
+  },
+  {
+    name: "shoulders",
+    image:
+      "https://res.cloudinary.com/dpla1hz0i/image/upload/v1725651101/back_z6qxrt.jpg",
+  },
+  {
+    name: "core",
+    image:
+      "https://res.cloudinary.com/dpla1hz0i/image/upload/v1725651100/core_lejo99.jpg",
+  },
+  {
+    name: "glutes",
+    image:
+      "https://res.cloudinary.com/dpla1hz0i/image/upload/v1725651100/glutes_xijo1w.jpg",
+  },
+  {
+    name: "claves",
+    image:
+      "https://res.cloudinary.com/dpla1hz0i/image/upload/v1725651101/calves_ugtbtc.jpg",
+  },
+  {
+    name: "forearms",
+    image:
+      "https://res.cloudinary.com/dpla1hz0i/image/upload/v1725651100/forearms_zmt9kn.jpg",
+  },
 ];
 
 class Request extends Component {
@@ -305,12 +347,19 @@ class Request extends Component {
                           onClick={() => {
                             this.setState({
                               showBodyPartsList: false,
-                              selectedBodyPart: eachItem,
+                              selectedBodyPart: eachItem.name,
                             });
                           }}
                           className="body-part"
                         >
-                          {eachItem}
+                          <img
+                            alt={eachItem.name}
+                            src={eachItem.image}
+                            className="body-part-image"
+                          />
+                          <span className="body-part-name">
+                            {eachItem.name}
+                          </span>
                         </li>
                       );
                     })}
