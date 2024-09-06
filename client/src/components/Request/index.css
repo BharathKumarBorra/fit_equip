@@ -136,13 +136,12 @@ input {
 }
 
 .equipments-search-list-container {
-  margin-top: 12px;
   position: relative;
 }
 
 .equipments-search-list {
   position: absolute;
-  top: 0;
+  top: 12px;
   left: 0;
   right: 0;
   background-color: white;
@@ -169,6 +168,15 @@ input {
 
 .equipment-search-item:hover {
   background-color: aliceblue;
+}
+
+.equipment-loading-item {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: rgb(224, 231, 238) 0px 0px 0px 1px,
+    rgba(0, 0, 0, 0.12) 2px 6px 10px 0px;
 }
 
 .equipment-image {

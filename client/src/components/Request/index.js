@@ -72,12 +72,22 @@ class Request extends Component {
       exercises: [], // List of exercises returned from the API
       errorMessage: "", // Error message to display
       isLoading: false, // Loading state for the submit button
+      gettingEquipments: false, // Indicates if equipment data is being fetched
     };
     this.resultSectionRef = React.createRef(); // Reference to the result section
   }
 
   // Render a search item for equipment
-  renderEquipmentSearchItem = (itemDetails) => {
+  renderEquipmentSearchItem = (itemDetails, isLoadingItem) => {
+    if (isLoadingItem) {
+      return (
+        <li className="equipment-search-item equipment-loading-item">
+          <TailSpin type="ThreeDots" color="black" height="16" width="16" />
+          <p className="equipment-name">getting equipments</p>
+        </li>
+      );
+    }
+
     const { image, name } = itemDetails;
 
     return (
@@ -102,12 +112,14 @@ class Request extends Component {
     const name = event.target.value;
     this.setState({
       inputEquipmentName: name,
+      gettingEquipments: true,
     });
 
     // Clear the search list if the input is empty
     if (name.length === 0) {
       this.setState({
         equipmentsSearchList: [],
+        gettingEquipments: false,
       });
       return;
     }
@@ -131,6 +143,7 @@ class Request extends Component {
 
         this.setState({
           equipmentsSearchList: filteredEquipments,
+          gettingEquipments: false,
         });
       }
     } catch (error) {
@@ -231,6 +244,7 @@ class Request extends Component {
             selectedBodyPart: "",
             numExercises: 1,
             showBodyPartsList: false,
+            gettingEquipments: false,
           },
           () => {
             if (this.state.exercises.length === 0) {
@@ -271,6 +285,7 @@ class Request extends Component {
       exercises,
       errorMessage,
       isLoading,
+      gettingEquipments,
     } = this.state;
 
     return (
@@ -305,11 +320,20 @@ class Request extends Component {
               value={inputEquipmentName}
               onChange={this.onChangeEquipmentName}
             />
+
+            {gettingEquipments && (
+              <div className="equipments-search-list-container">
+                <ul className="equipments-search-list">
+                  {this.renderEquipmentSearchItem({}, true)}
+                </ul>
+              </div>
+            )}
+
             {equipmentsSearchList.length > 0 && (
               <div className="equipments-search-list-container">
                 <ul className="equipments-search-list">
                   {equipmentsSearchList.map((eachItem) => {
-                    return this.renderEquipmentSearchItem(eachItem);
+                    return this.renderEquipmentSearchItem(eachItem, false);
                   })}
                 </ul>
               </div>
