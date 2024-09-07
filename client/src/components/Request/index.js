@@ -113,19 +113,20 @@ class Request extends Component {
   onChangeEquipmentName = async (event) => {
     const name = event.target.value;
 
-    this.setState({
-      inputEquipmentName: name,
-      gettingEquipments: true,
-    });
-
     // Clear the search list if the input is empty
     if (name === "") {
       this.setState({
+        inputEquipmentName: "",
         equipmentsSearchList: [],
         gettingEquipments: false,
       });
       return;
     }
+
+    this.setState({
+      inputEquipmentName: name,
+      gettingEquipments: true,
+    });
 
     // Abort the previous request if it exists
     if (this.state.controller) {
