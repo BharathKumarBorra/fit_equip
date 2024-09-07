@@ -92,6 +92,7 @@ class Request extends Component {
 
     return (
       <li
+        key={name}
         className="equipment-search-item"
         onClick={() => {
           this.setState((prevState) => ({
@@ -110,13 +111,14 @@ class Request extends Component {
   // Handle changes in the equipment search input
   onChangeEquipmentName = async (event) => {
     const name = event.target.value;
+
     this.setState({
       inputEquipmentName: name,
       gettingEquipments: true,
     });
 
     // Clear the search list if the input is empty
-    if (name.length === 0) {
+    if (name === "") {
       this.setState({
         equipmentsSearchList: [],
         gettingEquipments: false,
@@ -129,8 +131,10 @@ class Request extends Component {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/equipments?name=${name}`
       );
+
       if (response.ok) {
         const data = await response.json();
+
         const { selectedEquipments } = this.state;
 
         // Filter out the equipments that are already selected
@@ -167,7 +171,7 @@ class Request extends Component {
   renderSelectedEquipment = (itemDetails) => {
     const { name, image } = itemDetails;
     return (
-      <li className="selected-equipment-card">
+      <li className="selected-equipment-card" key={name}>
         <img alt={name} src={image} className="selected-equipment-image" />
         <h5 className="selected-equipment-name">{name}</h5>
 
@@ -368,6 +372,7 @@ class Request extends Component {
                     {bodyPartsList.map((eachItem) => {
                       return (
                         <li
+                          key={eachItem.name}
                           onClick={() => {
                             this.setState({
                               showBodyPartsList: false,
@@ -434,7 +439,7 @@ class Request extends Component {
 
             <ul className="exercises-list">
               {exercises.map((eachItem) => {
-                return <ResultCard resultCard={eachItem} />;
+                return <ResultCard key={eachItem.name} resultCard={eachItem} />;
               })}
             </ul>
           </div>
