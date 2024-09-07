@@ -73,6 +73,7 @@ class Request extends Component {
       errorMessage: "", // Error message to display
       isLoading: false, // Loading state for the submit button
       gettingEquipments: false, // Indicates if equipment data is being fetched
+      controller: null,
     };
     this.resultSectionRef = React.createRef(); // Reference to the result section
   }
@@ -126,10 +127,23 @@ class Request extends Component {
       return;
     }
 
+    // Abort the previous request if it exists
+    if (this.state.controller) {
+      this.state.controller.abort();
+    }
+
+    // Create a new AbortController
+    const controller = new AbortController();
+    const { signal } = controller;
+
+    // Save the new controller in the state
+    this.setState({ controller });
+
     try {
       // Fetch equipment from the server based on the search query
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/equipments?name=${name}`
+        `${process.env.REACT_APP_BACKEND_URL}/equipments?name=${name}`,
+        { signal }
       );
 
       if (response.ok) {
@@ -145,13 +159,24 @@ class Request extends Component {
             )
         );
 
+        // Update state and reset the controller
         this.setState({
           equipmentsSearchList: filteredEquipments,
           gettingEquipments: false,
+          controller: null, // Reset the controller
         });
       }
     } catch (error) {
-      console.log("error: ", error);
+      // Handle fetch errors or abort errors
+      if (error.name !== "AbortError") {
+        console.log("error: ", error);
+      }
+
+      // Reset the state and controller in case of error
+      this.setState({
+        gettingEquipments: false,
+        controller: null, // Reset the controller
+      });
     }
   };
 
