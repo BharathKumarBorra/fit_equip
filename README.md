@@ -32,7 +32,7 @@ Welcome to the Fit Equip Application! This application helps users discover exer
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/BunnyBharath91/fit_equip.git
+   git clone https://github.com/BharathKumarBorra/fit_equip.git
    cd fit-equip
    ```
 
